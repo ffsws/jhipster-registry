@@ -1,7 +1,8 @@
-FROM adoptopenjdk:11-jdk-hotspot as builder
+FROM adoptopenjdk:11-jdk-hotspot-bionic as builder
 ADD . /code/
 RUN \
     apt-get update && \
+    apt-get upgrade -y && \
     apt-get install build-essential -y && \
     cd /code/ && \
     rm -Rf target node_modules && \
@@ -12,12 +13,13 @@ RUN \
     apt-get clean && \
     rm -Rf /code/ /root/.m2 /root/.cache /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
-FROM adoptopenjdk:11-jre-hotspot
+FROM adoptopenjdk:11-jre-hotspot-bionic
 ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
     JAVA_OPTS="" \
     SPRING_PROFILES_ACTIVE=prod
 EXPOSE 8761
-RUN apt-get install -y curl && \
+RUN apt-get update && apt-get update -y && \
+    apt-get install -y curl && \
     apt-get clean && \
     mkdir /target && \
     chmod g+rwx /target
